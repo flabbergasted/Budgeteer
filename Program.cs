@@ -72,7 +72,8 @@ namespace Budgeteer
             BudgetMonth thisMonth = new BudgetMonth();
             FileStream notFound = new FileStream("NotFound/NotFoundLines.csv", FileMode.Create);
             StreamWriter writer = new StreamWriter(notFound);
-
+            var change = "yep";
+            
             string[] csbfiles = Directory.GetFiles(CSBEXPORT_LOCATION);
             foreach (string f in csbfiles)
             {
