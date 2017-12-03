@@ -189,7 +189,7 @@ namespace Budgeteer
 
             var notfoundpath = AppDomain.CurrentDomain.BaseDirectory + "NotFound/NotFoundLines.csv";
             Console.WriteLine(thisMonth.ToString());
-            Process.Start("C:/Program Files (x86)/OpenOffice.org 3/program/scalc.exe", "-view NotFound/NotFoundLines.csv");
+            Process.Start("C:/Program Files (x86)/OpenOffice 4/program/scalc.exe", "-view NotFound/NotFoundLines.csv");
             Console.ReadLine();
         }
 
