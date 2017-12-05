@@ -30,6 +30,25 @@ namespace Budgeteer
             public static int Category = 4;
             public static int Debit = 5;
             public static int Credit = 6;
+
+            public static void UpdateColumns(string[] columns)
+            {
+                for(var i = 0; i < columns.Length; i++)
+                {
+                    if (columns[i].Contains("Debit"))
+                    {
+                        Column.Debit = i;
+                    }
+                    else if(columns[i].Contains("Credit"))
+                    {
+                        Column.Credit = i;
+                    }
+                    else if (columns[i].Contains("Description"))
+                    {
+                        Column.Description = i;
+                    }
+                }
+            }
         };
     }
     static class CitiBank
@@ -59,14 +78,25 @@ namespace Budgeteer
             public static int Balance = 9;
         };
     }
-    //New Change separate from other branches
+    static class Chase
+    {
+        public static class Column
+        {
+            public static int Type = 0;
+            public static int TransDate = 1;
+            public static int PostDate = 2;
+            public static int Description = 3;
+            public static int Amount = 4;
+        };
+    }
     class Program
     {
         const string CSBEXPORT_LOCATION = "Exports/CSBExport";
         const string CAPONEEXPORT_LOCATION = "Exports/CapitalOneExport";
         const string CITIEXPORT_LOCATION = "Exports/CitiExport";
         const string PAYPALEXPORT_LOCATION = "Exports/PayPalExport";
-        
+        const string CHASEEXPORT_LOCATION = "Exports/ChaseExport";
+
         static void Main(string[] args)
         {
             Boolean isCorrectRows = false;
@@ -122,6 +152,7 @@ namespace Budgeteer
 
                         if (!isCorrectRows && line.Contains("Transaction Date"))
                         {
+                            CapitalOne.Column.UpdateColumns(line.Split(','));
                             isCorrectRows = true;
                         }
                     }
@@ -155,7 +186,6 @@ namespace Budgeteer
                     }
                 }
             }
-
             
             string[] paypalfiles = Directory.GetFiles(PAYPALEXPORT_LOCATION);
             foreach (string f in paypalfiles)
@@ -184,13 +214,56 @@ namespace Budgeteer
                 }
             }
 
+            string[] chasefiles = Directory.GetFiles(CHASEEXPORT_LOCATION);
+            foreach (string f in chasefiles)
+            {
+                writer.WriteLine("Chase Bank File");
+                isCorrectRows = false;
+                using (StreamReader reader = new StreamReader(f))
+                {
+                    while (!reader.EndOfStream)
+                    {
+                        var line = reader.ReadLine();
 
+                        if (isCorrectRows)
+                        {
+                            if (!ParseChaseLine(ref thisMonth, line))
+                            {
+                                writer.WriteLine(line);
+                            }
+                        }
+
+                        if (!isCorrectRows && line.Contains("Date"))
+                        {
+                            isCorrectRows = true;
+                        }
+                    }
+                }
+            }
+            
             writer.Close();
 
             var notfoundpath = AppDomain.CurrentDomain.BaseDirectory + "NotFound/NotFoundLines.csv";
             Console.WriteLine(thisMonth.ToString());
             Process.Start("C:/Program Files (x86)/OpenOffice 4/program/scalc.exe", "-view NotFound/NotFoundLines.csv");
             Console.ReadLine();
+        }
+
+        private static bool ParseChaseLine(ref BudgetMonth month, string line)
+        {
+            string[] entry = line.Split(',');
+            Boolean result = false;
+            if (entry[Chase.Column.Type] == "Return")
+            {
+                month.Income += Math.Abs(Decimal.Parse(entry[Chase.Column.Amount]));
+                result = true;
+            }
+            else if (entry[Chase.Column.Type] != "Payment")            
+            {
+                var debit = Math.Abs(Decimal.Parse(entry[Chase.Column.Amount].Replace("\"", "")));
+                result = UpdateCategory(ref month, entry[Chase.Column.Description], debit);
+            }
+            return result;
         }
 
         private static bool ParsePayPalLine(ref BudgetMonth month, string line)
