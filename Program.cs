@@ -408,7 +408,7 @@ namespace Budgeteer
                     string line = descriptions.ReadLine();
                     if(line.Trim().Length > 0)
                     {
-                        var reg = new Regex(line);
+                        var reg = new Regex(line, RegexOptions.IgnoreCase);
                         if (reg.IsMatch(desc) || desc == line)
                         {
                             return true;
