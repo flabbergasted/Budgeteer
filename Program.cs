@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 //Test
 namespace Budgeteer
 {
@@ -405,9 +406,13 @@ namespace Budgeteer
                 while (!descriptions.EndOfStream)
                 {
                     string line = descriptions.ReadLine();
-                    if (desc == line)
+                    if(line.Trim().Length > 0)
                     {
-                        return true;
+                        var reg = new Regex(line);
+                        if (reg.IsMatch(desc) || desc == line)
+                        {
+                            return true;
+                        }
                     }
                 }
             }

@@ -79,6 +79,7 @@
     <Compile Include="TransactionCat.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include=".gitignore" />
     <Content Include="Categories\Baby.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
