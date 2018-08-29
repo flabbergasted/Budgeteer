@@ -7,3 +7,4 @@ AMAZON.COM AMZN.COM/BILL
 Amazon.com
 .*BABIES R US.*
 DIAPER LAB
+Literati.*
