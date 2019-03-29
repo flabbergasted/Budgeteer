@@ -87,7 +87,8 @@ namespace Budgeteer
             public static int TransDate = 1;
             public static int PostDate = 2;
             public static int Description = 3;
-            public static int Amount = 4;
+            public static int NewType = 4;
+            public static int Amount = 5;
         };
     }
     class Program
